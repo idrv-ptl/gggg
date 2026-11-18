@@ -1,0 +1,2 @@
+.is-hidden{display:none!important}
+.auth-spinner{display:inline-block;width:15px;height:15px;border:2px solid #ffffff55;border-top-color:currentColor;border-radius:50%;animation:spin .75s linear infinite;vertical-align:middle}.session-loading{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--bg);color:var(--muted)}.toast--error{border-color:#f4788b77;color:#ffd5dc}.toast--success{border-color:#50d6a077;color:#b8ffe0}

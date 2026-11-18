@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       assistant.html : AI chat and voice assistant
+       Logic:   assets/js/assistant.js (chat, voice states, history)
+       Backend: send message  -> #chat-form (submit)
+                load history  -> #history-list (data-render="history")
+                load messages -> #chat-messages (data-render="messages")
+       Voice states set on #voice-panel[data-state]:
+                idle | listening | thinking | speaking
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chat or speak with your CampusAI assistant.">
+  <meta name="theme-color" content="#0B1220">
+  <title>AI Assistant | CampusAI</title>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/assistant.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body class="page-app page-assistant" data-page="assistant" data-role="student">
+
+  <!-- Page loader (controlled by ui.js) -->
+  <div class="loader" id="page-loader" aria-hidden="true">
+    <div class="loader__ring"></div>
+    <p class="loader__text">Starting your assistant</p>
+  </div>
+
+  <!-- Toast container (controlled by ui.js) -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <div class="app-shell" id="app-shell">
+
+    <!-- Sidebar mount (rendered by components/sidebar.js) -->
+    <aside class="sidebar" id="app-sidebar" data-component="sidebar" data-active="assistant" aria-label="Main navigation"></aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-main">
+
+      <!-- Navbar mount (rendered by components/navbar.js) -->
+      <header class="topbar" id="app-navbar" data-component="navbar" data-variant="app"></header>
+
+      <main class="app-content app-content--chat" id="main-content">
+        <div class="chat-layout" id="chat-layout">
+
+          <!-- ===================== CONVERSATION HISTORY ===================== -->
+          <aside class="chat-history" id="chat-history" aria-label="Conversation history">
+            <button class="btn btn--primary btn--block" type="button" id="new-chat-btn">
+              <i class="ri-add-line"></i> New chat
+            </button>
+
+            <div class="input-wrap input-wrap--sm">
+              <i class="ri-search-line input-wrap__icon"></i>
+              <input class="input" type="search" id="history-search" placeholder="Search chats" aria-label="Search chats">
+            </div>
+
+            <p class="chat-history__label">Recent</p>
+            <ul class="history-list" id="history-list" data-render="history"></ul>
+            <p class="empty-state" id="history-empty" hidden>
+              <i class="ri-chat-history-line"></i> No conversations yet.
+            </p>
+          </aside>
+
+          <!-- ===================== CHAT WINDOW ===================== -->
+          <section class="chat" id="chat-window" aria-labelledby="chat-title">
+
+            <!-- Chat header -->
+            <header class="chat__head">
+              <button class="icon-btn chat__history-toggle" type="button" id="history-toggle" aria-label="Show conversation history">
+                <i class="ri-menu-2-line"></i>
+              </button>
+              <span class="chat__avatar"><i class="ri-robot-2-line"></i></span>
+              <div class="chat__head-text">
+                <h1 class="chat__title" id="chat-title">CampusAI Assistant</h1>
+                <p class="chat__status" id="chat-status"><span class="status-dot"></span> Online</p>
+              </div>
+              <div class="chat__head-actions">
+                <button class="icon-btn" type="button" id="speak-toggle" aria-pressed="true" aria-label="Read answers aloud">
+                  <i class="ri-volume-up-line"></i>
+                </button>
+                <button class="icon-btn" type="button" id="clear-chat-btn" data-modal-open="modal-clear-chat" aria-label="Delete conversation">
+                  <i class="ri-delete-bin-6-line"></i>
+                </button>
+              </div>
+            </header>
+
+            <!-- Messages -->
+            <div class="chat__body" id="chat-body">
+
+              <!-- Welcome state: hidden once the first message is sent -->
+              <div class="chat-welcome" id="chat-welcome">
+                <span class="chat-welcome__icon"><i class="ri-sparkling-2-fill"></i></span>
+                <h2 class="chat-welcome__title">How can I help you today?</h2>
+                <p class="chat-welcome__text">Ask about attendance, timetable, assignments or notices.</p>
+
+                <!-- Suggested prompts (rendered from JSON by assistant.js) -->
+                <div class="prompt-grid" id="suggested-prompts" data-render="prompts">
+                  <button class="prompt-chip" type="button" data-prompt="What is my attendance this month?">
+                    <i class="ri-calendar-check-line"></i> What is my attendance this month?
+                  </button>
+                  <button class="prompt-chip" type="button" data-prompt="What classes do I have today?">
+                    <i class="ri-time-line"></i> What classes do I have today?
+                  </button>
+                  <button class="prompt-chip" type="button" data-prompt="Which assignments are due this week?">
+                    <i class="ri-file-list-3-line"></i> Which assignments are due this week?
+                  </button>
+                  <button class="prompt-chip" type="button" data-prompt="Show the latest college notices">
+                    <i class="ri-notification-3-line"></i> Show the latest college notices
+                  </button>
+                </div>
+              </div>
+
+              <!-- Message list -->
+              <div class="messages" id="chat-messages" data-render="messages" aria-live="polite"></div>
+
+              <!-- Typing indicator (toggled by assistant.js) -->
+              <div class="message message--bot typing" id="typing-indicator" hidden>
+                <span class="message__avatar"><i class="ri-robot-2-line"></i></span>
+                <div class="message__bubble typing__dots" aria-label="Assistant is typing">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===================== VOICE PANEL ===================== -->
+            <div class="voice-panel" id="voice-panel" data-state="idle" hidden>
+              <div class="voice-panel__visual" aria-hidden="true">
+                <span class="voice-wave voice-wave--1"></span>
+                <span class="voice-wave voice-wave--2"></span>
+                <span class="voice-wave voice-wave--3"></span>
+                <span class="voice-orb" id="voice-orb"><i class="ri-mic-fill"></i></span>
+              </div>
+
+              <!-- Speaking bars -->
+              <div class="voice-bars" id="voice-bars" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+
+              <p class="voice-panel__status" id="voice-status" role="status">Listening...</p>
+              <p class="voice-panel__transcript" id="voice-transcript"></p>
+
+              <div class="voice-panel__actions">
+                <button class="btn btn--ghost" type="button" id="voice-cancel-btn">
+                  <i class="ri-close-line"></i> Cancel
+                </button>
+                <button class="btn btn--danger" type="button" id="stop-speaking-btn" hidden>
+                  <i class="ri-stop-circle-line"></i> Stop speaking
+                </button>
+              </div>
+            </div>
+
+            <!-- ===================== INPUT BAR ===================== -->
+            <form class="chat__composer" id="chat-form" data-form="chat" novalidate>
+              <button class="icon-btn icon-btn--mic" type="button" id="voice-btn" aria-label="Start voice input">
+                <i class="ri-mic-line"></i>
+              </button>
+              <label class="visually-hidden" for="chat-input">Message</label>
+              <textarea class="chat__input" id="chat-input" name="message" rows="1"
+                        placeholder="Ask anything about your college..." maxlength="1000"></textarea>
+              <button class="icon-btn icon-btn--send" type="submit" id="send-btn" aria-label="Send message" disabled>
+                <i class="ri-send-plane-2-fill"></i>
+              </button>
+            </form>
+            <p class="chat__hint" id="chat-hint">The assistant can make mistakes. Raise a query for anything important.</p>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== TEMPLATES (cloned by assistant.js) ===================== -->
+  <template id="tpl-message-user">
+    <div class="message message--user">
+      <div class="message__bubble"></div>
+    </div>
+  </template>
+
+  <template id="tpl-message-bot">
+    <div class="message message--bot">
+      <span class="message__avatar"><i class="ri-robot-2-line"></i></span>
+      <div class="message__content">
+        <div class="message__bubble"></div>
+        <div class="message__tools">
+          <button class="icon-btn icon-btn--sm" type="button" data-action="speak" aria-label="Read aloud"><i class="ri-volume-up-line"></i></button>
+          <button class="icon-btn icon-btn--sm" type="button" data-action="copy" aria-label="Copy answer"><i class="ri-file-copy-line"></i></button>
+          <button class="icon-btn icon-btn--sm" type="button" data-action="escalate" aria-label="Send to faculty"><i class="ri-user-star-line"></i></button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-history-item">
+    <li class="history-item">
+      <button class="history-item__btn" type="button">
+        <i class="ri-chat-3-line"></i>
+        <span class="history-item__title"></span>
+      </button>
+    </li>
+  </template>
+
+  <!-- ===================== MODAL: DELETE CONVERSATION ===================== -->
+  <div class="modal" id="modal-clear-chat" role="dialog" aria-modal="true" aria-labelledby="clear-chat-title" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--center">
+      <span class="modal__status modal__status--danger"><i class="ri-delete-bin-6-line"></i></span>
+      <h2 class="modal__title" id="clear-chat-title">Delete this conversation?</h2>
+      <p class="modal__text">This removes all messages in the current chat.</p>
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--ghost" type="button" id="clear-chat-cancel" data-modal-close>Cancel</button>
+        <button class="btn btn--danger" type="button" id="clear-chat-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: LOGOUT CONFIRMATION ===================== -->
+  <div class="modal" id="modal-logout" role="dialog" aria-modal="true" aria-labelledby="logout-title" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--center">
+      <span class="modal__status modal__status--warning"><i class="ri-logout-box-r-line"></i></span>
+      <h2 class="modal__title" id="logout-title">Log out of CampusAI?</h2>
+      <p class="modal__text">You will need to log in again to continue.</p>
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--ghost" type="button" id="logout-cancel" data-modal-close>Stay logged in</button>
+        <button class="btn btn--danger" type="button" id="logout-confirm">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: components, then shared ui, then page logic -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/database.js"></script>
+<script src="assets/js/session.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/components/sidebar.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/assistant-api.js"></script>
+<script src="assets/js/voice.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/assistant.js"></script>
+</body>
+</html>
+
+
+
+

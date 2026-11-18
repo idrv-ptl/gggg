@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       index.html : Landing page
+       Shared design system: assets/css/style.css (+ responsive.css)
+       Components injected by: assets/js/components/navbar.js, footer.js
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CampusAI is your AI college assistant. Ask by voice or text about attendance, timetable, assignments, notices and more.">
+  <meta name="theme-color" content="#0B1220">
+  <title>CampusAI | Your AI College Assistant</title>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body class="page-landing" data-page="landing">
+
+  <!-- Page loader (controlled by ui.js) -->
+  <div class="loader" id="page-loader" aria-hidden="true">
+    <div class="loader__ring"></div>
+    <p class="loader__text">Loading CampusAI</p>
+  </div>
+
+  <!-- Toast container (controlled by ui.js) -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Navbar mount (rendered by components/navbar.js) -->
+  <header id="site-navbar" data-component="navbar" data-variant="landing"></header>
+
+  <main id="main-content">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero section" id="hero" aria-labelledby="hero-title">
+      <div class="container hero__grid">
+
+        <div class="hero__content">
+          <span class="badge badge--primary">
+            <i class="ri-sparkling-2-line"></i> Voice and chat enabled
+          </span>
+          <h1 class="hero__title" id="hero-title">Your AI College Assistant</h1>
+          <p class="hero__subtitle">
+            Ask about your attendance, timetable, assignments and notices by voice or text.
+            Get instant answers, and send queries to faculty without leaving the page.
+          </p>
+          <div class="hero__actions">
+            <a href="signup.html" class="btn btn--primary btn--lg" id="hero-cta-signup">
+              <i class="ri-user-add-line"></i> Get started free
+            </a>
+            <a href="#how-it-works" class="btn btn--ghost btn--lg" id="hero-cta-demo">
+              <i class="ri-play-circle-line"></i> See how it works
+            </a>
+          </div>
+          <ul class="hero__stats" id="hero-stats">
+            <li><strong>24/7</strong><span>Always available</span></li>
+            <li><strong>2 ways</strong><span>Speak or type</span></li>
+            <li><strong>1 place</strong><span>For every campus update</span></li>
+          </ul>
+        </div>
+
+        <!-- AI illustration: built with CSS only, no images needed -->
+        <div class="hero__visual" aria-hidden="true">
+          <div class="ai-orb" id="hero-orb">
+            <span class="ai-orb__ring ai-orb__ring--1"></span>
+            <span class="ai-orb__ring ai-orb__ring--2"></span>
+            <span class="ai-orb__ring ai-orb__ring--3"></span>
+            <span class="ai-orb__core"><i class="ri-mic-fill"></i></span>
+          </div>
+
+          <div class="float-card float-card--chat" id="hero-chat-card">
+            <div class="float-card__row float-card__row--user">
+              <span class="float-card__bubble float-card__bubble--user">What is my attendance in DBMS?</span>
+            </div>
+            <div class="float-card__row">
+              <span class="float-card__avatar"><i class="ri-robot-2-line"></i></span>
+              <span class="float-card__bubble">You are at 86% in DBMS. You can miss 3 more lectures.</span>
+            </div>
+          </div>
+
+          <div class="float-card float-card--stat" id="hero-stat-card">
+            <span class="float-card__icon float-card__icon--success"><i class="ri-calendar-check-line"></i></span>
+            <div>
+              <strong>86%</strong>
+              <small>Overall attendance</small>
+            </div>
+          </div>
+
+          <div class="float-card float-card--task" id="hero-task-card">
+            <span class="float-card__icon float-card__icon--warning"><i class="ri-file-list-3-line"></i></span>
+            <div>
+              <strong>2 due this week</strong>
+              <small>Assignments</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== FEATURES ===================== -->
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="features-title">Everything a student needs, in one assistant</h2>
+          <p class="section__subtitle">Stop jumping between notice boards, group chats and portals.</p>
+        </header>
+
+        <div class="grid grid--features" id="features-grid">
+          <article class="card card--feature" data-feature="voice">
+            <span class="card__icon"><i class="ri-mic-line"></i></span>
+            <h3 class="card__title">Voice Assistant</h3>
+            <p class="card__text">Speak your question and hear the answer read back to you.</p>
+          </article>
+          <article class="card card--feature" data-feature="attendance">
+            <span class="card__icon card__icon--success"><i class="ri-calendar-check-line"></i></span>
+            <h3 class="card__title">Attendance</h3>
+            <p class="card__text">Track every subject and see how many lectures you can still miss.</p>
+          </article>
+          <article class="card card--feature" data-feature="timetable">
+            <span class="card__icon card__icon--accent"><i class="ri-time-line"></i></span>
+            <h3 class="card__title">Timetable</h3>
+            <p class="card__text">Your weekly schedule, with today's classes always on top.</p>
+          </article>
+          <article class="card card--feature" data-feature="assignments">
+            <span class="card__icon card__icon--warning"><i class="ri-file-list-3-line"></i></span>
+            <h3 class="card__title">Assignments</h3>
+            <p class="card__text">Deadlines, priorities and status for every subject in one list.</p>
+          </article>
+          <article class="card card--feature" data-feature="chat">
+            <span class="card__icon"><i class="ri-chat-smile-3-line"></i></span>
+            <h3 class="card__title">AI Chat</h3>
+            <p class="card__text">Ask anything about syllabus, rules or campus life in plain language.</p>
+          </article>
+          <article class="card card--feature" data-feature="faculty">
+            <span class="card__icon card__icon--accent"><i class="ri-user-star-line"></i></span>
+            <h3 class="card__title">Faculty Help</h3>
+            <p class="card__text">If the AI cannot answer, your question goes straight to the right faculty.</p>
+          </article>
+          <article class="card card--feature" data-feature="queries">
+            <span class="card__icon card__icon--danger"><i class="ri-question-answer-line"></i></span>
+            <h3 class="card__title">Student Queries</h3>
+            <p class="card__text">Raise a query once and follow its status until it is resolved.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="section section--alt" id="about" aria-labelledby="about-title">
+      <div class="container split">
+        <div class="split__content">
+          <h2 class="section__title section__title--left" id="about-title">Built for students, supported by faculty</h2>
+          <p class="section__text">
+            CampusAI brings routine college information and student queries into one conversation.
+            Students get answers in seconds. Faculty and admins spend less time repeating the same replies
+            and more time on questions that need a person.
+          </p>
+          <ul class="check-list" id="about-points">
+            <li><i class="ri-checkbox-circle-fill"></i> Answers from your own college data</li>
+            <li><i class="ri-checkbox-circle-fill"></i> Works with voice, on phone and laptop</li>
+            <li><i class="ri-checkbox-circle-fill"></i> Admin tools for notices, attendance and queries</li>
+          </ul>
+        </div>
+        <div class="split__stats" id="about-stats">
+          <div class="stat-tile"><strong data-count="1200">1200</strong><span>Students supported</span></div>
+          <div class="stat-tile"><strong data-count="85">85</strong><span>Faculty connected</span></div>
+          <div class="stat-tile"><strong data-count="9500">9500</strong><span>Queries answered</span></div>
+          <div class="stat-tile"><strong data-count="98">98</strong><span>Percent satisfaction</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== HOW IT WORKS ===================== -->
+    <section class="section" id="how-it-works" aria-labelledby="how-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="how-title">How it works</h2>
+          <p class="section__subtitle">Three steps from question to answer.</p>
+        </header>
+
+        <ol class="steps" id="how-steps">
+          <li class="step">
+            <span class="step__number">1</span>
+            <h3 class="step__title">Ask</h3>
+            <p class="step__text">Tap the microphone or type your question.</p>
+          </li>
+          <li class="step">
+            <span class="step__number">2</span>
+            <h3 class="step__title">Get an answer</h3>
+            <p class="step__text">The assistant checks your college data and replies in text and voice.</p>
+          </li>
+          <li class="step">
+            <span class="step__number">3</span>
+            <h3 class="step__title">Escalate if needed</h3>
+            <p class="step__text">Unanswered questions are sent to faculty, and you can track the reply.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== TESTIMONIALS ===================== -->
+    <section class="section section--alt" id="testimonials" aria-labelledby="testimonials-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="testimonials-title">What students say</h2>
+        </header>
+
+        <!-- Placeholder content: replace with a Supabase query later -->
+        <div class="grid grid--testimonials" id="testimonials-list">
+          <figure class="card card--quote">
+            <blockquote>I check my attendance by voice while walking to class. It saves me so much time.</blockquote>
+            <figcaption>
+              <span class="avatar avatar--sm">AS</span>
+              <span><strong>Aarav S.</strong><small>Computer Engineering, Sem 5</small></span>
+            </figcaption>
+          </figure>
+          <figure class="card card--quote">
+            <blockquote>I never miss an assignment deadline now. Everything is listed with its priority.</blockquote>
+            <figcaption>
+              <span class="avatar avatar--sm">PK</span>
+              <span><strong>Priya K.</strong><small>IT, Sem 3</small></span>
+            </figcaption>
+          </figure>
+          <figure class="card card--quote">
+            <blockquote>My doubts reach the right professor, and I can see when they reply.</blockquote>
+            <figcaption>
+              <span class="avatar avatar--sm">RM</span>
+              <span><strong>Rohan M.</strong><small>Electronics, Sem 7</small></span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FAQ ===================== -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container container--narrow">
+        <header class="section__head">
+          <h2 class="section__title" id="faq-title">Frequently asked questions</h2>
+        </header>
+
+        <!-- Accordion: behaviour in ui.js (data-accordion) -->
+        <div class="accordion" id="faq-accordion" data-accordion>
+          <div class="accordion__item">
+            <button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-panel-1" id="faq-trigger-1">
+              Do I need a microphone to use the assistant?
+              <i class="ri-add-line"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-1" role="region" aria-labelledby="faq-trigger-1" hidden>
+              <p>No. You can type your questions. Voice is optional and works in browsers that support speech.</p>
+            </div>
+          </div>
+          <div class="accordion__item">
+            <button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-panel-2" id="faq-trigger-2">
+              Where does the assistant get my information?
+              <i class="ri-add-line"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-2" role="region" aria-labelledby="faq-trigger-2" hidden>
+              <p>From your college records, such as attendance, timetable and notices, shared by your institution.</p>
+            </div>
+          </div>
+          <div class="accordion__item">
+            <button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-panel-3" id="faq-trigger-3">
+              What happens if the AI cannot answer?
+              <i class="ri-add-line"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-3" role="region" aria-labelledby="faq-trigger-3" hidden>
+              <p>Your question becomes a query for faculty. You can follow its status on the Queries page.</p>
+            </div>
+          </div>
+          <div class="accordion__item">
+            <button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-panel-4" id="faq-trigger-4">
+              Is it free for students?
+              <i class="ri-add-line"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-4" role="region" aria-labelledby="faq-trigger-4" hidden>
+              <p>Yes. Students sign in with their college email at no cost.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FINAL CTA ===================== -->
+    <section class="section" id="cta" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-panel">
+          <h2 class="cta-panel__title" id="cta-title">Ask your first question today</h2>
+          <p class="cta-panel__text">Create your account in under a minute.</p>
+          <div class="hero__actions hero__actions--center">
+            <a href="signup.html" class="btn btn--primary btn--lg" id="cta-signup">Create account</a>
+            <a href="login.html" class="btn btn--ghost btn--lg" id="cta-login">I already have an account</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer mount (rendered by components/footer.js) -->
+  <footer id="site-footer" data-component="footer"></footer>
+
+  <!-- Scripts: load order matters (components, ui, then page logic) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/database.js"></script>
+<script src="assets/js/session.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/components/footer.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
+
+
+

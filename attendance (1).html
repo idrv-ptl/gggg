@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       attendance.html : Student attendance overview
+       Logic:   assets/js/dashboard.js (loader keyed by body[data-page])
+       Backend: subject cards  -> #attendance-grid (data-render="attendance")
+                overall summary -> #attendance-summary
+                chart           -> #attendance-chart (placeholder, plug in a chart library later)
+       Filters: #attendance-search, #attendance-status-filter, #attendance-sort
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your attendance for every subject in CampusAI.">
+  <meta name="theme-color" content="#0B1220">
+  <title>Attendance | CampusAI</title>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body class="page-app" data-page="attendance" data-role="student">
+
+  <!-- Page loader (controlled by ui.js) -->
+  <div class="loader" id="page-loader" aria-hidden="true">
+    <div class="loader__ring"></div>
+    <p class="loader__text">Loading attendance</p>
+  </div>
+
+  <!-- Toast container (controlled by ui.js) -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <div class="app-shell" id="app-shell">
+
+    <!-- Sidebar mount (rendered by components/sidebar.js) -->
+    <aside class="sidebar" id="app-sidebar" data-component="sidebar" data-active="attendance" aria-label="Main navigation"></aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-main">
+
+      <!-- Navbar mount (rendered by components/navbar.js) -->
+      <header class="topbar" id="app-navbar" data-component="navbar" data-variant="app"></header>
+
+      <main class="app-content" id="main-content">
+
+        <!-- ===================== PAGE HEADER ===================== -->
+        <section class="page-head" id="attendance-head" aria-labelledby="attendance-title">
+          <div>
+            <h1 class="page-head__title" id="attendance-title">Attendance</h1>
+            <p class="page-head__subtitle">Minimum required attendance is <strong id="attendance-required">75%</strong> in each subject.</p>
+          </div>
+          <a href="assistant.html" class="btn btn--ghost" id="attendance-ask-ai">
+            <i class="ri-sparkling-2-line"></i> Ask AI about attendance
+          </a>
+        </section>
+
+        <!-- ===================== OVERALL SUMMARY + CHART ===================== -->
+        <section class="attendance-top" id="attendance-top" aria-label="Overall attendance">
+
+          <!-- Overall percentage -->
+          <article class="card summary-card" id="attendance-summary">
+            <div class="ring" id="attendance-ring" data-value="0" role="img" aria-label="Overall attendance">
+              <svg class="ring__svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="ring__track" cx="60" cy="60" r="52"></circle>
+                <circle class="ring__fill" cx="60" cy="60" r="52"></circle>
+              </svg>
+              <p class="ring__value"><span id="attendance-overall-value">0</span>%</p>
+            </div>
+            <div class="summary-card__body">
+              <h2 class="summary-card__title">Overall attendance</h2>
+              <p class="summary-card__text" id="attendance-overall-text">Loading your attendance.</p>
+              <dl class="summary-card__stats">
+                <div>
+                  <dt>Attended</dt>
+                  <dd id="attendance-attended">0</dd>
+                </div>
+                <div>
+                  <dt>Total lectures</dt>
+                  <dd id="attendance-total">0</dd>
+                </div>
+                <div>
+                  <dt>Subjects below limit</dt>
+                  <dd id="attendance-low-count">0</dd>
+                </div>
+              </dl>
+            </div>
+          </article>
+
+          <!-- Chart placeholder: mount a chart here later (id stays the same) -->
+          <article class="card chart-card" id="attendance-chart-card">
+            <header class="panel__head">
+              <h2 class="panel__title">Monthly trend</h2>
+              <div class="tabs tabs--sm" id="attendance-chart-tabs" role="tablist" data-tabs>
+                <button class="tabs__tab is-active" type="button" role="tab" aria-selected="true" id="chart-tab-month" data-tab="month">Month</button>
+                <button class="tabs__tab" type="button" role="tab" aria-selected="false" id="chart-tab-semester" data-tab="semester">Semester</button>
+              </div>
+            </header>
+            <div class="chart-placeholder" id="attendance-chart" data-chart="attendance-trend">
+              <i class="ri-bar-chart-2-line"></i>
+              <p>Chart placeholder</p>
+              <small>Connect your chart library to this container.</small>
+            </div>
+          </article>
+        </section>
+
+        <!-- ===================== SEARCH AND FILTERS ===================== -->
+        <section class="toolbar" id="attendance-toolbar" aria-label="Search and filters">
+          <div class="input-wrap input-wrap--sm toolbar__search">
+            <i class="ri-search-line input-wrap__icon"></i>
+            <input class="input" type="search" id="attendance-search" placeholder="Search subjects" aria-label="Search subjects">
+          </div>
+
+          <div class="toolbar__filters">
+            <label class="visually-hidden" for="attendance-status-filter">Filter by status</label>
+            <select class="input input--select input--sm" id="attendance-status-filter">
+              <option value="all">All subjects</option>
+              <option value="safe">Safe (75% and above)</option>
+              <option value="warning">Warning (65% to 74%)</option>
+              <option value="critical">Critical (below 65%)</option>
+            </select>
+
+            <label class="visually-hidden" for="attendance-sort">Sort subjects</label>
+            <select class="input input--select input--sm" id="attendance-sort">
+              <option value="name">Sort by name</option>
+              <option value="low">Lowest attendance first</option>
+              <option value="high">Highest attendance first</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ===================== SUBJECT CARDS ===================== -->
+        <section id="attendance-section" aria-label="Subject attendance">
+          <div class="grid grid--cards" id="attendance-grid" data-render="attendance"></div>
+
+          <!-- Empty state when search or filter returns nothing -->
+          <div class="empty-state empty-state--lg" id="attendance-empty" hidden>
+            <i class="ri-search-eye-line"></i>
+            <h2>No subjects found</h2>
+            <p>Try a different search or clear the filters.</p>
+            <button class="btn btn--ghost" type="button" id="attendance-clear-filters">Clear filters</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Floating AI assistant button -->
+  <a href="assistant.html" class="fab" id="fab-assistant" aria-label="Open AI assistant">
+    <i class="ri-sparkling-2-fill"></i>
+    <span class="fab__label">Ask AI</span>
+  </a>
+
+  <!-- ===================== TEMPLATE: SUBJECT CARD (cloned by dashboard.js) ===================== -->
+  <template id="tpl-attendance-card">
+    <article class="card subject-card" data-status="safe">
+      <header class="subject-card__head">
+        <span class="subject-card__icon"><i class="ri-book-2-line"></i></span>
+        <div>
+          <h3 class="subject-card__name"></h3>
+          <p class="subject-card__faculty"></p>
+        </div>
+        <span class="badge badge--success subject-card__badge"></span>
+      </header>
+      <p class="subject-card__percent"><span class="subject-card__value">0</span>%</p>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="progress__fill"></span>
+      </div>
+      <p class="subject-card__meta"></p>
+    </article>
+  </template>
+
+  <!-- ===================== MODAL: LOGOUT CONFIRMATION ===================== -->
+  <div class="modal" id="modal-logout" role="dialog" aria-modal="true" aria-labelledby="logout-title" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--center">
+      <span class="modal__status modal__status--warning"><i class="ri-logout-box-r-line"></i></span>
+      <h2 class="modal__title" id="logout-title">Log out of CampusAI?</h2>
+      <p class="modal__text">You will need to log in again to continue.</p>
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--ghost" type="button" id="logout-cancel" data-modal-close>Stay logged in</button>
+        <button class="btn btn--danger" type="button" id="logout-confirm">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: components, then shared ui, then page logic -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/database.js"></script>
+<script src="assets/js/session.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/components/sidebar.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/dashboard.js"></script>
+<script src="assets/js/attendance.js"></script>
+</body>
+</html>
+
+
+
+
+

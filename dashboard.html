@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin dashboard | CampusAI</title><link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="../assets/css/dashboard.css"><link rel="stylesheet" href="../assets/css/responsive.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"></head><body class="page-app" data-page="admin-dashboard" data-role="admin"><div class="app-shell"><aside class="sidebar" id="app-sidebar"></aside><div class="app-main"><header class="topbar"><span class="brand">CampusAI <span class="badge">ADMIN</span></span><input class="topbar__search" type="search" placeholder="Search admin" aria-label="Search"><span class="avatar">AD</span></header><main class="page-content"><div class="breadcrumb">Administration / Overview</div><section class="page-head"><div><h1>Admin overview</h1><p class="page-head__subtitle">A snapshot of student support across campus.</p></div></section><section class="grid grid--stats"><article class="card stat-card"><div><p class="stat-card__label">Students</p><p class="stat-card__value" id="admin-students">—</p></div></article><article class="card stat-card"><div><p class="stat-card__label">Open queries</p><p class="stat-card__value" id="admin-open">—</p></div></article><article class="card stat-card"><div><p class="stat-card__label">Resolution rate</p><p class="stat-card__value" id="admin-resolved">—</p></div></article><article class="card stat-card"><div><p class="stat-card__label">Active notices</p><p class="stat-card__value" id="admin-notices">—</p></div></article></section><section class="dashboard-grid"><article class="card"><h2>Query resolution</h2><div class="progress"><span class="progress__fill" id="admin-resolution-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></span></div><p id="admin-resolution-copy">Loading query resolution…</p></article><article class="card"><h2>Quick links</h2><p><a class="btn" href="students.html">Manage students</a> <a class="btn" href="queries.html">Review queries</a></p></article></section></main></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/supabase.js"></script>
+<script src="../assets/js/database.js"></script>
+<script src="../assets/js/session.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/pages.js"></script>
+<script src="../assets/js/components/sidebar.js"></script>
+<script src="../assets/js/dashboard.js"></script></body></html>
+
+
+

@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{const date=document.getElementById('greeting-date');if(date)date.textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(new Date())});

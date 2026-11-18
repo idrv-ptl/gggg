@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Students | CampusAI Admin</title><link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="../assets/css/dashboard.css"><link rel="stylesheet" href="../assets/css/responsive.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"></head><body class="page-app" data-page="students" data-role="admin"><div class="app-shell"><aside class="sidebar" id="app-sidebar"></aside><div class="app-main"><header class="topbar"><span class="brand">CampusAI · Admin</span><input type="search" class="topbar__search" placeholder="Search students" aria-label="Search students" data-filter-target="#students-body"><span class="avatar">AD</span></header><main class="page-content"><div class="breadcrumb">Administration / Students</div><section class="page-head"><div><h1>Students</h1><p class="page-head__subtitle">Manage student directory and enrollment.</p></div><button class="btn btn--primary" id="student-export">Export list</button></section><div class="toolbar"><select id="student-program" aria-label="Filter program"><option>All programs</option><option>Computer Engineering</option><option>Information Technology</option></select><span class="muted" id="students-count">Loading students…</span></div><section class="card"><div class="table-wrap"><table id="students-table"><thead><tr><th>Student ID</th><th>Name</th><th>Branch</th><th>Semester</th><th>Email</th></tr></thead><tbody id="students-body"></tbody></table></div><p class="muted">Student directory loaded from the Supabase students table.</p></section></main></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/supabase.js"></script>
+<script src="../assets/js/database.js"></script>
+<script src="../assets/js/session.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/pages.js"></script>
+<script src="../assets/js/components/sidebar.js"></script>
+<script src="../assets/js/dashboard.js"></script></body></html>
+
+
+
+

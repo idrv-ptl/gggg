@@ -1,0 +1,1 @@
+window.CampusAI=window.CampusAI||{};window.CampusAI.toast=window.CampusAI.toast||((m)=>{const r=document.getElementById('toast-container');if(!r)return;const e=document.createElement('div');e.className='toast';e.textContent=m;r.append(e);setTimeout(()=>e.remove(),3000)});

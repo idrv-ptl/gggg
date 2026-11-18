@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       dashboard.html : Student dashboard
+       Layout: sidebar (components/sidebar.js) + navbar (components/navbar.js)
+       Data:   authenticated Supabase queries in assets/js/pages.js
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your CampusAI dashboard: attendance, assignments, classes and notices at a glance.">
+  <meta name="theme-color" content="#0B1220">
+  <title>Dashboard | CampusAI</title>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body class="page-app" data-page="dashboard" data-role="student">
+
+  <!-- Page loader (controlled by ui.js) -->
+  <div class="loader" id="page-loader" aria-hidden="true">
+    <div class="loader__ring"></div>
+    <p class="loader__text">Loading your dashboard</p>
+  </div>
+
+  <!-- Toast container (controlled by ui.js) -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <div class="app-shell" id="app-shell">
+
+    <!-- Sidebar mount (rendered by components/sidebar.js) -->
+    <aside class="sidebar" id="app-sidebar" data-component="sidebar" data-active="dashboard" aria-label="Main navigation"></aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-main">
+
+      <!-- Navbar mount (rendered by components/navbar.js) -->
+      <header class="topbar" id="app-navbar" data-component="navbar" data-variant="app"></header>
+
+      <main class="app-content" id="main-content">
+
+        <!-- ===================== GREETING ===================== -->
+        <section class="page-head" id="dashboard-greeting" aria-labelledby="greeting-title">
+          <div>
+            <h1 class="page-head__title" id="greeting-title">Good morning, <span id="greeting-name">Student</span></h1>
+            <p class="page-head__subtitle" id="greeting-date">Here is what is happening today.</p>
+          </div>
+          <a href="assistant.html" class="btn btn--primary" id="greeting-ask-ai">
+            <i class="ri-mic-line"></i> Ask the assistant
+          </a>
+        </section>
+
+        <!-- ===================== STAT CARDS ===================== -->
+        <section class="grid grid--stats" id="dashboard-stats" aria-label="Summary">
+
+          <article class="card stat-card" id="stat-attendance">
+            <span class="stat-card__icon stat-card__icon--success"><i class="ri-calendar-check-line"></i></span>
+            <div class="stat-card__body">
+              <p class="stat-card__label">Attendance</p>
+              <p class="stat-card__value"><span id="stat-attendance-value">0</span>%</p>
+              <div class="progress progress--sm" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="stat-attendance-bar">
+                <span class="progress__fill progress__fill--success"></span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card stat-card" id="stat-assignments">
+            <span class="stat-card__icon stat-card__icon--warning"><i class="ri-file-list-3-line"></i></span>
+            <div class="stat-card__body">
+              <p class="stat-card__label">Pending assignments</p>
+              <p class="stat-card__value" id="stat-assignments-value">0</p>
+              <p class="stat-card__meta" id="stat-assignments-meta">Nothing due soon</p>
+            </div>
+          </article>
+
+          <article class="card stat-card" id="stat-classes">
+            <span class="stat-card__icon"><i class="ri-time-line"></i></span>
+            <div class="stat-card__body">
+              <p class="stat-card__label">Today's classes</p>
+              <p class="stat-card__value" id="stat-classes-value">0</p>
+              <p class="stat-card__meta" id="stat-classes-meta">No classes scheduled</p>
+            </div>
+          </article>
+
+          <article class="card stat-card" id="stat-notices">
+            <span class="stat-card__icon stat-card__icon--accent"><i class="ri-notification-3-line"></i></span>
+            <div class="stat-card__body">
+              <p class="stat-card__label">Latest notices</p>
+              <p class="stat-card__value" id="stat-notices-value">0</p>
+              <p class="stat-card__meta" id="stat-notices-meta">You are all caught up</p>
+            </div>
+          </article>
+
+          <article class="card stat-card" id="stat-exams">
+            <span class="stat-card__icon stat-card__icon--danger"><i class="ri-draft-line"></i></span>
+            <div class="stat-card__body">
+              <p class="stat-card__label">Recent queries</p>
+              <p class="stat-card__value" id="stat-exams-value">0</p>
+              <p class="stat-card__meta" id="stat-exams-meta">No queries submitted</p>
+            </div>
+          </article>
+        </section>
+
+        <!-- ===================== MAIN GRID ===================== -->
+        <div class="dashboard-grid">
+
+          <!-- Today's classes -->
+          <section class="card panel" id="today-classes-panel" aria-labelledby="today-classes-title">
+            <header class="panel__head">
+              <h2 class="panel__title" id="today-classes-title">Today's classes</h2>
+              <a href="timetable.html" class="panel__link" id="today-classes-link">Full timetable</a>
+            </header>
+            <ul class="list" id="today-classes-list" data-render="today-classes"></ul>
+            <p class="empty-state" id="today-classes-empty" hidden>
+              <i class="ri-cup-line"></i> No classes today. Enjoy the free time.
+            </p>
+          </section>
+
+          <!-- Quick actions -->
+          <section class="card panel" id="quick-actions-panel" aria-labelledby="quick-actions-title">
+            <header class="panel__head">
+              <h2 class="panel__title" id="quick-actions-title">Quick actions</h2>
+            </header>
+            <div class="quick-actions" id="quick-actions">
+              <a href="assistant.html" class="quick-action" id="qa-ask">
+                <i class="ri-chat-smile-3-line"></i><span>Ask AI</span>
+              </a>
+              <a href="queries.html" class="quick-action" id="qa-query">
+                <i class="ri-question-answer-line"></i><span>Raise a query</span>
+              </a>
+              <a href="attendance.html" class="quick-action" id="qa-attendance">
+                <i class="ri-calendar-check-line"></i><span>Attendance</span>
+              </a>
+              <a href="assignments.html" class="quick-action" id="qa-assignments">
+                <i class="ri-file-list-3-line"></i><span>Assignments</span>
+              </a>
+              <a href="syllabus.html" class="quick-action" id="qa-syllabus">
+                <i class="ri-book-open-line"></i><span>Syllabus</span>
+              </a>
+              <a href="notices.html" class="quick-action" id="qa-notices">
+                <i class="ri-notification-3-line"></i><span>Notices</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- Upcoming deadlines -->
+          <section class="card panel" id="deadlines-panel" aria-labelledby="deadlines-title">
+            <header class="panel__head">
+              <h2 class="panel__title" id="deadlines-title">Upcoming deadlines</h2>
+              <a href="assignments.html" class="panel__link" id="deadlines-link">View all</a>
+            </header>
+            <ul class="list" id="deadlines-list" data-render="deadlines"></ul>
+            <p class="empty-state" id="deadlines-empty" hidden>
+              <i class="ri-checkbox-circle-line"></i> No pending assignments.
+            </p>
+          </section>
+
+          <!-- Recent activity -->
+          <section class="card panel" id="activity-panel" aria-labelledby="activity-title">
+            <header class="panel__head">
+              <h2 class="panel__title" id="activity-title">Recent activity</h2>
+            </header>
+            <ol class="timeline" id="activity-list" data-render="activity"></ol>
+            <p class="empty-state" id="activity-empty" hidden>
+              <i class="ri-history-line"></i> Your activity will show up here.
+            </p>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Floating AI assistant button -->
+  <a href="assistant.html" class="fab" id="fab-assistant" aria-label="Open AI assistant">
+    <i class="ri-sparkling-2-fill"></i>
+    <span class="fab__label">Ask AI</span>
+  </a>
+
+  <!-- ===================== MODAL: LOGOUT CONFIRMATION ===================== -->
+  <div class="modal" id="modal-logout" role="dialog" aria-modal="true" aria-labelledby="logout-title" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--center">
+      <span class="modal__status modal__status--warning"><i class="ri-logout-box-r-line"></i></span>
+      <h2 class="modal__title" id="logout-title">Log out of CampusAI?</h2>
+      <p class="modal__text">You will need to log in again to see your dashboard.</p>
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--ghost" type="button" id="logout-cancel" data-modal-close>Stay logged in</button>
+        <button class="btn btn--danger" type="button" id="logout-confirm">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts: components, then shared ui, then page logic -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/database.js"></script>
+<script src="assets/js/session.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/components/sidebar.js"></script>
+<script src="assets/js/components/navbar.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
+
+
+
+

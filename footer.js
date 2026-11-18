@@ -1,0 +1,1 @@
+(()=>{const r=document.querySelector('[data-component="footer"]');if(r)r.innerHTML='<div class="container footer__inner"><a class="brand" href="index.html">✦ CampusAI</a><span>Student life, made simpler.</span><span>© '+new Date().getFullYear()+' CampusAI</span></div>'})();

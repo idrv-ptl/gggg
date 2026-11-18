@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       login.html : Student / admin sign in
+       Backend hook: #login-form (submit) -> supabase.auth.signInWithPassword
+       Form logic lives in assets/js/main.js (data-form="login")
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Log in to CampusAI, your AI college assistant.">
+  <meta name="theme-color" content="#0B1220">
+  <title>Log in | CampusAI</title>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body class="page-auth" data-page="login">
+
+  <!-- Page loader (controlled by ui.js) -->
+  <div class="loader" id="page-loader" aria-hidden="true">
+    <div class="loader__ring"></div>
+    <p class="loader__text">Loading CampusAI</p>
+  </div>
+
+  <!-- Toast container (controlled by ui.js) -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <main class="auth" id="main-content">
+
+    <!-- ===================== BRAND PANEL (hidden on small screens) ===================== -->
+    <aside class="auth__aside" aria-hidden="true">
+      <a href="index.html" class="brand brand--lg" id="auth-brand">
+        <span class="brand__mark"><i class="ri-sparkling-2-fill"></i></span>
+        <span class="brand__name">CampusAI</span>
+      </a>
+      <div class="auth__pitch">
+        <h2 class="auth__pitch-title">Ask once. Get answers from your whole campus.</h2>
+        <p class="auth__pitch-text">Attendance, timetable, assignments and notices, by voice or text.</p>
+      </div>
+      <div class="ai-orb ai-orb--sm">
+        <span class="ai-orb__ring ai-orb__ring--1"></span>
+        <span class="ai-orb__ring ai-orb__ring--2"></span>
+        <span class="ai-orb__core"><i class="ri-mic-fill"></i></span>
+      </div>
+    </aside>
+
+    <!-- ===================== LOGIN CARD ===================== -->
+    <section class="auth__panel" aria-labelledby="login-title">
+      <div class="auth-card" id="login-card">
+
+        <a href="index.html" class="auth-card__back" id="login-back-link">
+          <i class="ri-arrow-left-line"></i> Back to home
+        </a>
+
+        <header class="auth-card__head">
+          <h1 class="auth-card__title" id="login-title">Welcome back</h1>
+          <p class="auth-card__subtitle">Log in to continue to your dashboard.</p>
+        </header>
+
+        <!-- Form-level error (shown by main.js) -->
+        <div class="alert alert--danger" id="login-alert" role="alert" hidden>
+          <i class="ri-error-warning-line"></i>
+          <span id="login-alert-text"></span>
+        </div>
+
+        <form class="form" id="login-form" data-form="login" novalidate>
+
+          <!-- Email -->
+          <div class="form__group">
+            <label class="form__label" for="login-email">College email</label>
+            <div class="input-wrap">
+              <i class="ri-mail-line input-wrap__icon"></i>
+              <input class="input" type="email" id="login-email" name="email"
+                     placeholder="you@college.edu" autocomplete="email" required>
+            </div>
+            <p class="form__error" id="login-email-error" hidden></p>
+          </div>
+
+          <!-- Password -->
+          <div class="form__group">
+            <label class="form__label" for="login-password">Password</label>
+            <div class="input-wrap">
+              <i class="ri-lock-2-line input-wrap__icon"></i>
+              <input class="input" type="password" id="login-password" name="password"
+                     placeholder="Enter your password" autocomplete="current-password" required minlength="6">
+              <button class="input-wrap__action" type="button" id="login-password-toggle"
+                      data-toggle-password="login-password" aria-label="Show password">
+                <i class="ri-eye-line"></i>
+              </button>
+            </div>
+            <p class="form__error" id="login-password-error" hidden></p>
+          </div>
+
+          <!-- Remember me + forgot password -->
+          <div class="form__row">
+            <label class="checkbox" for="login-remember">
+              <input type="checkbox" id="login-remember" name="remember">
+              <span class="checkbox__box"><i class="ri-check-line"></i></span>
+              <span class="checkbox__label">Remember me</span>
+            </label>
+            <button class="link-button" type="button" id="login-forgot-link" data-modal-open="modal-forgot-password">
+              Forgot password?
+            </button>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn btn--primary btn--block btn--lg" type="submit" id="login-submit">
+            <span class="btn__label">Log in</span>
+            <span class="btn__spinner" aria-hidden="true"></span>
+          </button>
+
+          <div class="divider"><span>or continue with</span></div>
+
+          <!-- Google sign in: wire to supabase.auth.signInWithOAuth({ provider: 'google' }) -->
+          <button class="btn btn--outline btn--block btn--lg" type="button" id="login-google">
+            <i class="ri-google-fill"></i>
+            <span class="btn__label">Continue with Google</span>
+          </button>
+        </form>
+
+        <p class="auth-card__footer">
+          New to CampusAI?
+          <a href="signup.html" id="login-signup-link">Create an account</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== MODAL: FORGOT PASSWORD ===================== -->
+  <div class="modal" id="modal-forgot-password" role="dialog" aria-modal="true"
+       aria-labelledby="forgot-title" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog">
+      <button class="modal__close" type="button" data-modal-close aria-label="Close">
+        <i class="ri-close-line"></i>
+      </button>
+      <header class="modal__head">
+        <h2 class="modal__title" id="forgot-title">Reset your password</h2>
+        <p class="modal__text">Enter your email and we will send you a reset link.</p>
+      </header>
+
+      <form class="form" id="forgot-form" data-form="forgot-password" novalidate>
+        <div class="form__group">
+          <label class="form__label" for="forgot-email">College email</label>
+          <div class="input-wrap">
+            <i class="ri-mail-line input-wrap__icon"></i>
+            <input class="input" type="email" id="forgot-email" name="email"
+                   placeholder="you@college.edu" autocomplete="email" required>
+          </div>
+          <p class="form__error" id="forgot-email-error" hidden></p>
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--ghost" type="button" id="forgot-cancel" data-modal-close>Cancel</button>
+          <button class="btn btn--primary" type="submit" id="forgot-submit">
+            <span class="btn__label">Send reset link</span>
+            <span class="btn__spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts: ui.js (loader, toast, modal) before main.js (form logic) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/database.js"></script>
+<script src="assets/js/session.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
+
+
+
